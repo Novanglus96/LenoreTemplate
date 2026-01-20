@@ -51,9 +51,18 @@ jobs:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD}}
       
+      - name: Compute project identifiers
+        shell: bash
+        run: |
+          SLUG="$(echo "${{ github.event.repository.name }}" \
+            | tr '[:upper:]' '[:lower:]')"
+          
+          echo "FRONTEND_NAME=${SLUG}_frontend" >> "GITHUB_ENV"
+          echo "BACKEND_NAME=${SLUG}_backend" >> "GITHUB_ENV"
+          echo "WORKER_NAME=${SLUG}_worker" >> "GITHUB_ENV"
+
       - name: Check if Docker tag exists
         env:
-          FRONTEND_NAME: {{PROJECT_SLUG}}_frontend
           DOCKER_HUB_REPO: ${{ secrets.DOCKER_USERNAME }}
         id: docker_tag_check
         run: |
@@ -75,9 +84,6 @@ jobs:
       - name: Publish Docker Images
         if: steps.docker_tag_check.outputs.exists == 'false'
         env:
-          BACKEND_NAME: {{PROJECT_SLUG}}_backend
-          FRONTEND_NAME: {{PROJECT_SLUG}}_frontend
-          WORKER_NAME: {{PROJECT_SLUG}}_worker
           DOCKER_HUB_REPO: ${{ secrets.DOCKER_USERNAME }}
         run: |
           echo "Publishing Docker images to $DOCKER_HUB_REPO..."
