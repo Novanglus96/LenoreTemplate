@@ -12,5 +12,5 @@ DATABASE=postgres
 DJANGO_SUPERUSER_PASSWORD=somepassword
 DJANGO_SUPERUSER_EMAIL=someemail@somewhere.com
 DJANGO_SUPERUSER_USERNAME=some_username
-API_KEY=somekey
+VITE_API_KEY=somekey
 TIMEZONE=America/New_York

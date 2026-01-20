@@ -64,12 +64,15 @@ services:
     volumes:
       - postgres_data:/var/lib/postgresql/
     env_file:
-      - ./.env.dev.db
+      - ./.env.dev
     networks:
       - backend
     container_name: {{PROJECT_SLUG}}_db_dev
     environment:
       - TZ=UTC
+      - POSTGRES_USER=${SQL_USER}
+      - POSTGRES_PASSWORD=${SQL_PASSWORD}
+      - POSTGRES_DB=${SQL_DATABASE}
 
 volumes:
   postgres_data:

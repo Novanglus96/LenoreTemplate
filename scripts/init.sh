@@ -12,6 +12,8 @@
 [ ! -f "$PROJECT_NAME.code-workspace" ] && mv code-workspace.example $PROJECT_NAME.code-workspace
 
 # Move example env files
+[ ! -f ".env" ] && mv example_env .env
+[ ! -f ".env.dev" ] && mv example_env_dev .env.dev
 
 # setup venv
 
