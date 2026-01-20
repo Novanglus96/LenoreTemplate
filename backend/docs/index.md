@@ -30,21 +30,21 @@
 <!-- PROJECT LOGO -->
 <br />
 <div align="center">
-  <a href="https://github.com/Novanglus96/LenoreAD">
+  <a href="https://github.com/Novanglus96/{{PROJECT_NAME}}">
     <img src="frontend/public/logov2.png" alt="Logo" height="40">
   </a>
 
-<h3 align="center">LenoreAD</h3>
+<h3 align="center">{{PROJECT_NAME}}</h3>
 
   <p align="center">
   An Active Directory Management Dashboard
     <br />
-    <a href="https://github.com/Novanglus96/LenoreAD"><strong>Explore the docs »</strong></a>
+    <a href="https://github.com/Novanglus96/{{PROJECT_NAME}}"><strong>Explore the docs »</strong></a>
     <br />
     <br />
-    <a href="https://github.com/Novanglus96/LenoreAD/issues/new?template=bug_report.md">Report Bug</a>
+    <a href="https://github.com/Novanglus96/{{PROJECT_NAME}}/issues/new?template=bug_report.md">Report Bug</a>
     ·
-    <a href="https://github.com/Novanglus96/LenoreAD/issues/new?template=feature_request.md">Request Feature</a>
+    <a href="https://github.com/Novanglus96/{{PROJECT_NAME}}/issues/new?template=feature_request.md">Request Feature</a>
   </p>
 </div>
 
@@ -74,7 +74,7 @@ A managment dashboard to make managing active directory easier.  It includes som
 <!-- GETTING STARTED -->
 ## Getting Started
 
-Welcome to LenoreAD! This guide will help you set up and run the application using Docker and Docker Compose.
+Welcome to {{PROJECT_NAME}}! This guide will help you set up and run the application using Docker and Docker Compose.
 
 ### Prerequisites
 
@@ -94,7 +94,7 @@ SECRET_KEY=mysupersecretkey
 DJANGO_ALLOWED_HOSTS=localhost
 CSRF_TRUSTED_ORIGINS=http://localhost
 SQL_ENGINE=django.db.backends.postgresql
-SQL_DATABASE=LenoreAD
+SQL_DATABASE={{PROJECT_NAME}}
 SQL_USER=LenoreADuser
 SQL_PASSWORD=somepassword
 SQL_HOST=db
@@ -119,7 +119,7 @@ services:
     image: novanglus96/LenoreAD_frontend:latest
     container_name: LenoreAD_frontend
     networks:
-      - LenoreAD
+      - {{PROJECT_NAME}}
     restart: unless-stopped
     expose:
       - 80
@@ -137,7 +137,7 @@ services:
     depends_on:
       - db
     networks:
-      - LenoreAD
+      - {{PROJECT_NAME}}
     env_file:
       - ./.env
   db:
@@ -148,7 +148,7 @@ services:
     env_file:
       - ./.env.db
     networks:
-      - LenoreAD
+      - {{PROJECT_NAME}}
   nginx:
     image: novanglus96/lenoreapps_proxy:latest
     container_name: LenoreAD_nginx
@@ -161,10 +161,10 @@ services:
       - backend
       - frontend
     networks:
-      - LenoreAD
+      - {{PROJECT_NAME}}
 
 networks:
-  LenoreAD:
+  {{PROJECT_NAME}}:
 
 volumes:
   LenoreAD_postgres_data:
@@ -190,7 +190,7 @@ volumes:
 * Adjust exposed ports as needed for your environment.
 * If you encounter any issues, ensure your `.env` file has the correct values and your Docker and Docker Compose installations are up to date.
 
-Enjoy using LenoreAD!
+Enjoy using {{PROJECT_NAME}}!
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
@@ -198,7 +198,7 @@ Enjoy using LenoreAD!
 
 <!-- USAGE EXAMPLES -->
 ## Usage
-See the full <a href="https://novanglus96.github.io/LenoreAD"><strong>documentation</strong></a>.
+See the full <a href="https://novanglus96.github.io/{{PROJECT_NAME}}"><strong>documentation</strong></a>.
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
@@ -212,7 +212,7 @@ See the full <a href="https://novanglus96.github.io/LenoreAD"><strong>documentat
   - [ ] Office 365 tools
   - [ ] Reports
 
-See the [open issues](https://github.com/Novanglus96/LenoreAD/issues) for a full list of proposed features (and known issues).
+See the [open issues](https://github.com/Novanglus96/{{PROJECT_NAME}}/issues) for a full list of proposed features (and known issues).
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
@@ -318,7 +318,7 @@ Distributed under the MIT License. See `LICENSE.txt` for more information.
 
 John Adams - Lenore.Apps@gmail.com
 
-Project Link: [https://github.com/Novanglus96/LenoreAD](https://github.com/Novanglus96/LenoreAD)
+Project Link: [https://github.com/Novanglus96/{{PROJECT_NAME}}](https://github.com/Novanglus96/{{PROJECT_NAME}})
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
@@ -336,7 +336,7 @@ A heartfelt thanks to our Patrons for their generous support! Your contributions
 <!--![Silver Supporter Badge](https://img.shields.io/badge/Jane_Smith-silver?style=for-the-badge&logo=patreon&logoColor=gray)-->
 <!--![BuyMeACoffee Supporter Badge](https://img.shields.io/badge/Jane_Smith-white?style=for-the-badge&logo=buymeacoffee&logoColor=black)-->
 
-Want to see your name here? Support us on [Patreon](https://www.patreon.com/novanglus) to join our amazing community and shape the future of LenoreAD!
+Want to see your name here? Support us on [Patreon](https://www.patreon.com/novanglus) to join our amazing community and shape the future of {{PROJECT_NAME}}!
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
@@ -344,16 +344,16 @@ Want to see your name here? Support us on [Patreon](https://www.patreon.com/nova
 
 <!-- MARKDOWN LINKS & IMAGES -->
 <!-- https://www.markdownguide.org/basic-syntax/#reference-style-links -->
-[contributors-shield]: https://img.shields.io/github/contributors/Novanglus96/LenoreAD?style=for-the-badge
-[contributors-url]: https://github.com/Novanglus96/LenoreAD/graphs/contributors
-[forks-shield]: https://img.shields.io/github/forks/Novanglus96/LenoreAD?style=for-the-badge
-[forks-url]: https://github.com/Novanglus96/LenoreAD/forks
-[stars-shield]: https://img.shields.io/github/stars/Novanglus96/LenoreAD?style=for-the-badge
-[stars-url]: https://github.com/Novanglus96/LenoreAD/stargazers
-[issues-shield]: https://img.shields.io/github/issues/Novanglus96/LenoreAD?style=for-the-badge
-[issues-url]: https://github.com/Novanglus96/LenoreAD/issues
+[contributors-shield]: https://img.shields.io/github/contributors/Novanglus96/{{PROJECT_NAME}}?style=for-the-badge
+[contributors-url]: https://github.com/Novanglus96/{{PROJECT_NAME}}/graphs/contributors
+[forks-shield]: https://img.shields.io/github/forks/Novanglus96/{{PROJECT_NAME}}?style=for-the-badge
+[forks-url]: https://github.com/Novanglus96/{{PROJECT_NAME}}/forks
+[stars-shield]: https://img.shields.io/github/stars/Novanglus96/{{PROJECT_NAME}}?style=for-the-badge
+[stars-url]: https://github.com/Novanglus96/{{PROJECT_NAME}}/stargazers
+[issues-shield]: https://img.shields.io/github/issues/Novanglus96/{{PROJECT_NAME}}?style=for-the-badge
+[issues-url]: https://github.com/Novanglus96/{{PROJECT_NAME}}/issues
 [license-shield]: https://img.shields.io/badge/License-MIT-yellow.svg?style=for-the-badge
-[license-url]: https://github.com/Novanglus96/LenoreAD/blob/main/LICENSE
+[license-url]: https://github.com/Novanglus96/{{PROJECT_NAME}}/blob/main/LICENSE
 [linkedin-shield]: https://img.shields.io/badge/-LinkedIn-black.svg?style=for-the-badge&logo=linkedin&colorB=555
 [linkedin-url]: https://www.linkedin.com/in/johnmadamsjr
 [product-screenshot]: images/screenshot.png

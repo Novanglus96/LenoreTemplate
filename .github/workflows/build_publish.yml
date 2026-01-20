@@ -53,7 +53,7 @@ jobs:
       
       - name: Check if Docker tag exists
         env:
-          FRONTEND_NAME: lenoread_frontend
+          FRONTEND_NAME: {{PROJECT_SLUG}}_frontend
           DOCKER_HUB_REPO: ${{ secrets.DOCKER_USERNAME }}
         id: docker_tag_check
         run: |
@@ -75,9 +75,9 @@ jobs:
       - name: Publish Docker Images
         if: steps.docker_tag_check.outputs.exists == 'false'
         env:
-          BACKEND_NAME: lenoread_backend
-          FRONTEND_NAME: lenoread_frontend
-          WORKER_NAME: lenoread_worker
+          BACKEND_NAME: {{PROJECT_SLUG}}_backend
+          FRONTEND_NAME: {{PROJECT_SLUG}}_frontend
+          WORKER_NAME: {{PROJECT_SLUG}}_worker
           DOCKER_HUB_REPO: ${{ secrets.DOCKER_USERNAME }}
         run: |
           echo "Publishing Docker images to $DOCKER_HUB_REPO..."

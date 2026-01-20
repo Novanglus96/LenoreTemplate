@@ -13,7 +13,7 @@ export default defineConfig({
     createHtmlPlugin({
       inject: {
         data: {
-          title: "LenoreAD",
+          title: "{{PROJECT_NAME}}",
         },
       },
     }),
