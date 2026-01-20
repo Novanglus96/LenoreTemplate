@@ -1,0 +1,16 @@
+DEBUG=1
+SECRET_KEY=somekey
+DJANGO_ALLOWED_HOSTS=localhost
+CSRF_TRUSTED_ORIGINS=http://localhost
+SQL_ENGINE=django.db.backends.postgresql
+SQL_DATABASE={{PROJECT_SLUG}}
+SQL_USER={{PROJECT_SLUG}}user
+SQL_PASSWORD=somepassword
+SQL_HOST=db
+SQL_PORT=5432
+DATABASE=postgres
+DJANGO_SUPERUSER_PASSWORD=somepassword
+DJANGO_SUPERUSER_EMAIL=someemail@somewhere.com
+DJANGO_SUPERUSER_USERNAME=some_username
+VITE_API_KEY=somekey
+TIMEZONE=America/New_York
