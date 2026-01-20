@@ -13,6 +13,7 @@ env:
 
 jobs:
   reddit:
+   if: github.repository != 'Novanglus96/LenoreTemplate'
    runs-on: self-hosted
 
    steps:

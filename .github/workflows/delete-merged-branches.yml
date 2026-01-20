@@ -5,7 +5,7 @@ on:
 
 jobs:
   delete-branch:
-    if: github.event.pull_request.merged == true
+    if: github.event.pull_request.merged == true && github.repository != 'Novanglus96/LenoreTemplate'
     runs-on: self-hosted
     steps:
       - name: Delete branch if merged
