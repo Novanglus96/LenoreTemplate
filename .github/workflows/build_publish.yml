@@ -1,0 +1,144 @@
+name: Build & Publish
+
+on:
+  release:
+    types: [published]
+
+permissions:
+  contents: read
+
+env:
+  VERSION: ${{ github.event.release.tag_name }}
+  IS_PRERELEASE: ${{ github.event.release.prerelease }}
+
+jobs:
+  docker:
+   runs-on: self-hosted
+   steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ env.VERSION }}
+
+      - name: Build images
+        run: docker compose -f docker-compose-prod.yml build
+
+      - name: Extract major/minor versions
+        id: version_parts
+        run: |
+          MAJOR=$(echo $VERSION | cut -d. -f1 | sed 's/v//')
+          MINOR=$(echo $VERSION | cut -d. -f2)
+          PATCH=$(echo $VERSION | cut -d. -f3)
+          echo "MAJOR=v$MAJOR" >> $GITHUB_ENV
+          echo "MINOR=v$MAJOR.$MINOR" >> $GITHUB_ENV
+          
+          # Check for pre-release suffix (e.g. -rc.1, -alpha.1, -beta.2, etc.)
+          if [[ "$VERSION" == *"-"* ]]; then
+            PRERELEASE=true
+            PRERELEASE_TAG=$(echo "$VERSION" | grep -oP '(?<=-)(rc|alpha|beta)')
+            echo "PRERELEASE=$PRERELEASE" >> $GITHUB_ENV
+            echo "PRERELEASE_TAG=$PRERELEASE_TAG" >> $GITHUB_ENV
+          else
+            PRERELEASE=false
+            PRERELEASE_TAG=""
+            echo "PRERELEASE=$PRERELEASE" >> $GITHUB_ENV
+            echo "PRERELEASE_TAG=$PRERELEASE_TAG" >> $GITHUB_ENV
+          fi
+        
+      - name: Log in to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD}}
+      
+      - name: Check if Docker tag exists
+        env:
+          FRONTEND_NAME: lenoread_frontend
+          DOCKER_HUB_REPO: ${{ secrets.DOCKER_USERNAME }}
+        id: docker_tag_check
+        run: |
+          IMAGE="${DOCKER_HUB_REPO}/${FRONTEND_NAME}"
+
+          if curl --silent -f -lSL "https://hub.docker.com/v2/repositories/${IMAGE}/tags/${VERSION}" > /dev/null; then
+            echo "exists=true" >> $GITHUB_OUTPUT
+          else
+            echo "exists=false" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Build Docker Images
+        if: steps.docker_tag_check.outputs.exists == 'false'
+        run: |
+          echo "Building Docker images..."
+          docker compose -f docker-compose-prod.yml build
+          echo "Docker images built successfully."
+
+      - name: Publish Docker Images
+        if: steps.docker_tag_check.outputs.exists == 'false'
+        env:
+          BACKEND_NAME: lenoread_backend
+          FRONTEND_NAME: lenoread_frontend
+          WORKER_NAME: lenoread_worker
+          DOCKER_HUB_REPO: ${{ secrets.DOCKER_USERNAME }}
+        run: |
+          echo "Publishing Docker images to $DOCKER_HUB_REPO..."
+
+          # Tag new images with the release version
+          docker tag $BACKEND_NAME:production $DOCKER_HUB_REPO/$BACKEND_NAME:${VERSION}
+          docker tag $FRONTEND_NAME:production $DOCKER_HUB_REPO/$FRONTEND_NAME:${VERSION}
+          docker tag $WORKER_NAME:production $DOCKER_HUB_REPO/$WORKER_NAME:${VERSION}
+
+          # Push versioned tags
+          docker push $DOCKER_HUB_REPO/$BACKEND_NAME:${VERSION}
+          docker push $DOCKER_HUB_REPO/$FRONTEND_NAME:${VERSION}
+          docker push $DOCKER_HUB_REPO/$WORKER_NAME:${VERSION}
+
+          echo "Prelease = $PRERELEASE : TAG: $PRERELEASE_TAG"
+          if [[ "$PRERELEASE" == "true" && -n "$PRERELEASE_TAG" ]]; then
+            echo "Tagging prerelease as $PRERELEASE_TAG..."
+
+            docker tag $BACKEND_NAME:production $DOCKER_HUB_REPO/$BACKEND_NAME:$PRERELEASE_TAG
+            docker tag $FRONTEND_NAME:production $DOCKER_HUB_REPO/$FRONTEND_NAME:$PRERELEASE_TAG
+            docker tag $WORKER_NAME:production $DOCKER_HUB_REPO/$WORKER_NAME:$PRERELEASE_TAG
+
+            docker push $DOCKER_HUB_REPO/$BACKEND_NAME:$PRERELEASE_TAG
+            docker push $DOCKER_HUB_REPO/$FRONTEND_NAME:$PRERELEASE_TAG
+            docker push $DOCKER_HUB_REPO/$WORKER_NAME:$PRERELEASE_TAG
+          fi
+          
+          if [[ "$PRERELEASE" == "false" ]]; then
+            echo "Tagging as latest, ${MAJOR}, and ${MINOR} (final release)"
+
+            # Tag latest tags
+            docker tag $BACKEND_NAME:production $DOCKER_HUB_REPO/$BACKEND_NAME:latest
+            docker tag $FRONTEND_NAME:production $DOCKER_HUB_REPO/$FRONTEND_NAME:latest
+            docker tag $WORKER_NAME:production $DOCKER_HUB_REPO/$WORKER_NAME:latest
+
+            # Push latest tags
+            docker push $DOCKER_HUB_REPO/$BACKEND_NAME:latest
+            docker push $DOCKER_HUB_REPO/$FRONTEND_NAME:latest
+            docker push $DOCKER_HUB_REPO/$WORKER_NAME:latest
+
+            # Tag major tags
+            docker tag $BACKEND_NAME:production $DOCKER_HUB_REPO/$BACKEND_NAME:${MAJOR}
+            docker tag $FRONTEND_NAME:production $DOCKER_HUB_REPO/$FRONTEND_NAME:${MAJOR}
+            docker tag $WORKER_NAME:production $DOCKER_HUB_REPO/$WORKER_NAME:${MAJOR}
+
+            # Push major tags
+            docker push $DOCKER_HUB_REPO/$BACKEND_NAME:${MAJOR}
+            docker push $DOCKER_HUB_REPO/$FRONTEND_NAME:${MAJOR}
+            docker push $DOCKER_HUB_REPO/$WORKER_NAME:${MAJOR}
+
+            # Tag minor tags
+            docker tag $BACKEND_NAME:production $DOCKER_HUB_REPO/$BACKEND_NAME:${MINOR}
+            docker tag $FRONTEND_NAME:production $DOCKER_HUB_REPO/$FRONTEND_NAME:${MINOR}
+            docker tag $WORKER_NAME:production $DOCKER_HUB_REPO/$WORKER_NAME:${MINOR}
+
+            # Push minor tags
+            docker push $DOCKER_HUB_REPO/$BACKEND_NAME:${MINOR}
+            docker push $DOCKER_HUB_REPO/$FRONTEND_NAME:${MINOR}
+            docker push $DOCKER_HUB_REPO/$WORKER_NAME:${MINOR}
+          
+          else
+            echo "Skipping tagging as latest/major/minor for prerelease version (${VERSION})"
+          fi
+          
+          echo "Published Docker images for version ${VERSION}."

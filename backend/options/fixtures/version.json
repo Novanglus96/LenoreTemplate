@@ -1,0 +1,9 @@
+[
+  {
+    "model": "options.Version",
+    "pk": 1,
+    "fields": {
+        "version_number": "__VERSION__"
+    }
+  }
+]

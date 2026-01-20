@@ -1,0 +1,53 @@
+site_name: LenoreAD
+site_description: An advanced admin dashboard for AD
+site_author: John Adams
+site_url: https://novanglus96.github.io/LenoreAD/
+repo_url: https://github.com/Novanglus96/LenoreAD
+copyright: 2027 John Adams
+nav:
+  - Home: index.md
+  - Reference:
+      - Models: models.md
+      - API: api.md
+theme:
+  name: material
+  palette:
+    - scheme: default
+      primary: indigo
+      accent: indigo
+      toggle:
+        icon: material/weather-sunny
+        name: Switch to light mode
+    - scheme: slate
+      primary: indigo
+      accent: indigo
+      toggle:
+        icon: material/weather-night
+        name: Switch to dark mode
+  custom_dir: docs/overrides
+plugins:
+  - search
+  - mkdocstrings:
+      handlers:
+        python:
+          #docstring_style: google
+          options:
+            show_root_heading: true
+            show_root_full_path: false
+            show_bases: false
+            allow_inspection: true
+            show_defaults: true
+            members:
+              - __str__
+          #rendering:
+          #  show_defaults: true
+markdown_extensions:
+  - attr_list
+  - pymdownx.emoji:
+      emoji_index: !!python/name:material.extensions.emoji.twemoji
+      emoji_generator: !!python/name:material.extensions.emoji.to_svg
+extra:
+  version:
+    provider: mike
+    default: latest
+    alias: true

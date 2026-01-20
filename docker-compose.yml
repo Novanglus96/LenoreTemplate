@@ -1,0 +1,82 @@
+services:
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile.dev
+    networks:
+      - default
+    restart: unless-stopped
+    ports:
+      - 8081:5173
+    image: lenoread_frontend:development
+    container_name: lenoread_frontend_dev
+    volumes:
+      - ./frontend:/app
+    environment:
+      - NODE_ENV=development
+      - TZ=${TIMEZONE}
+    command: /bin/sh -c "npm run serve"
+    env_file:
+      - ./.env.dev
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile.dev
+    command: /usr/src/app/start.dev.sh
+    env_file:
+      - ./.env.dev
+    volumes:
+      - ./backend:/usr/src/app
+      - ./backups:/backups
+    environment:
+      - DEBUG=1
+    ports:
+      - 8001:8001
+      - 8002:8002
+    depends_on:
+      - db
+    networks:
+      - default
+      - backend
+    image: lenoread_backend:development
+    container_name: lenoread_backend_dev
+  worker:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile.dev
+    command: /usr/src/app/start_worker.sh
+    env_file:
+      - ./.env.dev
+    volumes:
+      - ./backend:/usr/src/app
+      - ./backups:/backups
+    environment:
+      - DEBUG=1
+    depends_on:
+      - db
+      - backend
+    networks:
+      - backend
+    image: lenoread_worker:development
+    container_name: lenoread_worker_dev
+  db:
+    image: postgres:18-trixie
+    volumes:
+      - postgres_data:/var/lib/postgresql/
+    env_file:
+      - ./.env.dev.db
+    networks:
+      - backend
+    container_name: lenoread_db_dev
+    environment:
+      - TZ=UTC
+
+volumes:
+  postgres_data:
+  static_volume:
+  media_volume:
+  postgres_bkp:
+
+networks:
+  backend:
+    internal: true
