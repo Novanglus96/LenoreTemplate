@@ -29,9 +29,8 @@ fi
 gh api \
   --method PUT \
   repos/Novanglus96/$PROJECT_NAME/actions/permissions \
-  -f enabled=true \
-  -f allowed_actions="all" \
-  -f allow_actions_to_approve_pull_requests=true
+  --input scripts/actions.json
+
 
 
 # Import branch rulesets
