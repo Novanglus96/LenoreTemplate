@@ -144,22 +144,21 @@ Create a `docker-compose.yml` file in the root directory of the project. Below i
 ```yaml
 services:
   frontend:
-    build: ./frontend
+    image: {{PROJECT_SLUG}}_frontend:production
+    container_name: {{PROJECT_SLUG}}_frontend
     networks:
       - default
     restart: unless-stopped
     expose:
       - 80
-    image: {{PROJECT_SLUG}}_frontend:production
-    container_name: {{PROJECT_SLUG}}_frontend
     env_file:
       - ./.env
     environment:
       - TIMEZONE=America/New_York
       - TZ=${TIMEZONE}
   backend:
-    build:
-      context: ./backend
+    image: {{PROJECT_SLUG}}_backend:production
+    container_name: {{PROJECT_SLUG}}_backend
     command: /home/app/web/start.sh
     volumes:
       - static_volume:/home/app/web/staticfiles
@@ -174,11 +173,9 @@ services:
       - backend
     env_file:
       - ./.env
-    image: {{PROJECT_SLUG}}_backend:production
-    container_name: {{PROJECT_SLUG}}_backend
   worker:
-    build:
-      context: ./backend
+    image: {{PROJECT_SLUG}}_worker:production
+    container_name: {{PROJECT_SLUG}}_worker
     command: /home/app/web/start_worker.sh
     volumes:
       - static_volume:/home/app/web/staticfiles
@@ -192,10 +189,9 @@ services:
       - backend
     env_file:
       - ./.env
-    image: {{PROJECT_SLUG}}_worker:production
-    container_name: {{PROJECT_SLUG}}_worker
   db:
     image: postgres:18-trixie
+    container_name: {{PROJECT_SLUG}}_db
     volumes:
       - postgres_data:/var/lib/postgresql/data/
     env_file:
@@ -203,7 +199,6 @@ services:
     networks:
       - default
       - backend
-    container_name: {{PROJECT_SLUG}}_db
     environment:
       - TZ=UTC
       - POSTGRES_USER=${SQL_USER}
@@ -211,6 +206,7 @@ services:
       - POSTGRES_DB=${SQL_DATABASE}
   nginx:
     image: novanglus96/lenoreapps_proxy:latest
+    container_name: {{PROJECT_SLUG}}_proxy
     volumes:
       - static_volume:/home/app/web/staticfiles
       - media_volume:/home/app/web/mediafiles
@@ -221,7 +217,6 @@ services:
       - default
     ports:
       - 7000:80
-    container_name: {{PROJECT_SLUG}}_proxy
     environment:
       - TZ=${TIMEZONE}
 
