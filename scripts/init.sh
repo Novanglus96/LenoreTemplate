@@ -15,10 +15,13 @@ if ! command -v jq >/dev/null 2>&1; then
 fi
 
 # Load .env.secrets
-if [[ -f .env.secrets ]]; then
-  set -a
-  source .env.secrets
-  set +a
+SECRETS_FILE=".env.secrets"
+if [[ -f "$SECRETS_FILE" ]]; then
+  while IFS='=' read -r key value; do
+    [[ -z "$key" || "$key" =~ ^# ]] && continue
+
+    gh secret set "$key" --body "$value" >/dev/null
+  done < "$SECRETS_FILE"
 else
   echo "❌ .env.secrets not found. Create it before running init.sh"
   exit 1
