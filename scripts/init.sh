@@ -16,8 +16,16 @@
 [ ! -f ".env.dev" ] && mv example_env_dev .env.dev
 
 # setup venv
+[ ! -d .venv ] && python3 -m venv .venv
 
-# update requirements file
+# activate venv
+source .venv/bin/activate
 
-# update npm packages
+# Install pip requirements
+cd backend
+pip install --no-cache-dir -r requirements.txt
+
+# install npm packages
+cd ../frontend
+npm install
  
