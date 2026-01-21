@@ -1,3 +1,8 @@
-After creating project from template, run ./scripts/init.sh to initialize new project
+After creating project from template:
+
+    * Import branch rulesets
+    * Under Actions/General check Allow GitHub Actions to create and approve pull requests
+    * Create Repo Secrets
+    * run ./scripts/init.sh to initialize new project
 
 You can delete this file once completed.
