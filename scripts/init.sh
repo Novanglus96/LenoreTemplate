@@ -8,6 +8,12 @@ if ! command -v gh >/dev/null 2>&1; then
   exit 1
 fi
 
+# Check if jq cli is intalled
+if ! command -v jq >/dev/null 2>&1; then
+  echo "❌ jq is not installed."
+  exit 1
+fi
+
 # Load .env.secrets
 if [[ -f .env.secrets ]]; then
   set -a
@@ -31,13 +37,19 @@ gh api \
   repos/Novanglus96/$PROJECT_NAME/actions/permissions/workflow \
   --input scripts/actions.json
 
-
-
 # Import branch rulesets
-gh api \
+# Check if a ruleset with the same name exists
+EXISTS=$(gh api repos/Novanglus96/$PROJECT_NAME/rulesets \
+  | jq -r --arg NAME "Protect Main" '.[] | select(.name==$NAME) | .name')
+
+if [[ -n "$EXISTS" ]]; then
+  echo "ℹ️ Ruleset '$RULESET_NAME' already exists in $REPO — skipping import."
+else
+  gh api \
   --method POST \
   repos/Novanglus96/$PROJECT_NAME/rulesets \
   --input scripts/rulesets/main.json
+fi
 
 # Move example workspace
 [ ! -f "$PROJECT_NAME.code-workspace" ] && mv code-workspace.example $PROJECT_NAME.code-workspace
