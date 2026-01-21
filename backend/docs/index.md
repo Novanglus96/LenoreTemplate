@@ -207,10 +207,7 @@ See the full <a href="https://novanglus96.github.io/{{PROJECT_NAME}}"><strong>do
 <!-- ROADMAP -->
 ## Roadmap
 
-- [ ] v1.1 Release
-  - [ ] Templates
-  - [ ] Office 365 tools
-  - [ ] Reports
+- [ ] some feature
 
 See the [open issues](https://github.com/Novanglus96/{{PROJECT_NAME}}/issues) for a full list of proposed features (and known issues).
 
