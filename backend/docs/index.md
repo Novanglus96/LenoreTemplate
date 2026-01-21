@@ -95,7 +95,7 @@ DJANGO_ALLOWED_HOSTS=localhost
 CSRF_TRUSTED_ORIGINS=http://localhost
 SQL_ENGINE=django.db.backends.postgresql
 SQL_DATABASE={{PROJECT_NAME}}
-SQL_USER=LenoreADuser
+SQL_USER={{PROJECT_SLUG}}user
 SQL_PASSWORD=somepassword
 SQL_HOST=db
 SQL_PORT=5432
@@ -116,8 +116,8 @@ Create a `docker-compose.yml` file in the root directory of the project. Below i
 ```yaml
 services:
   frontend:
-    image: novanglus96/LenoreAD_frontend:latest
-    container_name: LenoreAD_frontend
+    image: novanglus96/{{PROJECT_SLUG}}_frontend:latest
+    container_name: {{PROJECT_SLUG}}_frontend
     networks:
       - {{PROJECT_NAME}}
     restart: unless-stopped
@@ -126,12 +126,12 @@ services:
     env_file:
       - ./.env
   backend:
-    image: novanglus96/LenoreAD_backend:latest
-    container_name: LenoreAD_backend
+    image: novanglus96/{{PROJECT_SLUG}}_backend:latest
+    container_name: {{PROJECT_SLUG}}_backend
     command: /home/app/web/start.sh
     volumes:
-      - LenoreAD_static_volume:/home/app/web/staticfiles
-      - LenoreAD_media_volume:/home/app/web/mediafiles
+      - {{PROJECT_SLUG}}_static_volume:/home/app/web/staticfiles
+      - {{PROJECT_SLUG}}_media_volume:/home/app/web/mediafiles
     expose:
       - 8000
     depends_on:
@@ -142,21 +142,21 @@ services:
       - ./.env
   db:
     image: postgres:15
-    container_name: LenoreAD_db
+    container_name: {{PROJECT_SLUG}}_db
     volumes:
-      - LenoreAD_postgres_data:/var/lib/postgresql/data/
+      - {{PROJECT_SLUG}}_postgres_data:/var/lib/postgresql/data/
     env_file:
       - ./.env.db
     networks:
       - {{PROJECT_NAME}}
   nginx:
     image: novanglus96/lenoreapps_proxy:latest
-    container_name: LenoreAD_nginx
+    container_name: {{PROJECT_SLUG}}_nginx
     ports:
       - "8080:80"
     volumes:
-      - LenoreAD_static_volume:/home/app/web/staticfiles
-      - LenoreAD_media_volume:/home/app/web/mediafiles
+      - {{PROJECT_SLUG}}_static_volume:/home/app/web/staticfiles
+      - {{PROJECT_SLUG}}_media_volume:/home/app/web/mediafiles
     depends_on:
       - backend
       - frontend
@@ -167,11 +167,11 @@ networks:
   {{PROJECT_NAME}}:
 
 volumes:
-  LenoreAD_postgres_data:
+  {{PROJECT_SLUG}}_postgres_data:
     external: true
-  LenoreAD_static_volume:
+  {{PROJECT_SLUG}}_static_volume:
     external: true
-  LenoreAD_media_volume:
+  {{PROJECT_SLUG}}_media_volume:
     external: true
 ```
 
