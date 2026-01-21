@@ -22,13 +22,13 @@ fi
  read -p "Project name (e.g. LenoreApp): " PROJECT_NAME
  read -p "Project slug (e.g. lenoreapp): " PROJECT_SLUG
 
- grep -rl --exclude="scripts/init.sh" "{{PROJECT_NAME}}" . | xargs sed -i "s/{{PROJECT_NAME}}/$PROJECT_NAME/g"
- grep -rl --exclude="scripts/init.sh" "{{PROJECT_SLUG}}" . | xargs sed -i "s/{{PROJECT_SLUG}}/$PROJECT_SLUG/g"
+ grep -rl --exclude="init.sh" "{{PROJECT_NAME}}" . | xargs sed -i "s/{{PROJECT_NAME}}/$PROJECT_NAME/g"
+ grep -rl --exclude="init.sh" "{{PROJECT_SLUG}}" . | xargs sed -i "s/{{PROJECT_SLUG}}/$PROJECT_SLUG/g"
 
 # Set allow actions to approve pull requests
 gh api \
   --method PUT \
-  repos/Novanglus96/$PROJECT_NAME/actions/permissions/wokflow \
+  repos/Novanglus96/$PROJECT_NAME/actions/permissions/workflow \
   --input scripts/actions.json
 
 
