@@ -37,7 +37,7 @@
 <h3 align="center">{{PROJECT_NAME}}</h3>
 
   <p align="center">
-  An Active Directory Management Dashboard
+  A template for Django/Vue/Docker projects
     <br />
     <a href="https://github.com/Novanglus96/{{PROJECT_NAME}}"><strong>Explore the docs »</strong></a>
     <br />
@@ -55,7 +55,7 @@
 
 [![Product Name Screen Shot][product-screenshot]](https://example.com)
 
-A managment dashboard to make managing active directory easier.  It includes some features to work with a hybrid environment that uses office 365 / entra.  Built to be simple and secure, it can help accomplish admin tasks in a consistent and auditable way.
+A template for Django/Vue/Docker projects.  Please read instructions.txt for insutructions on how to use this template.
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
