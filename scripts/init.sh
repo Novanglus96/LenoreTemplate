@@ -28,7 +28,7 @@ fi
 # Set allow actions to approve pull requests
 gh api \
   --method PUT \
-  repos/Novanglus96/$PROJECT_NAME/actions/permissions \
+  repos/Novanglus96/$PROJECT_NAME/actions/permissions/wokflow \
   --input scripts/actions.json
 
 
