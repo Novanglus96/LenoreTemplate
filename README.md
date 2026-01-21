@@ -144,63 +144,96 @@ Create a `docker-compose.yml` file in the root directory of the project. Below i
 ```yaml
 services:
   frontend:
-    image: novanglus96/{{PROJECT_SLUG}}_frontend:latest
-    container_name: {{PROJECT_SLUG}}_frontend
+    build: ./frontend
     networks:
-      - {{PROJECT_NAME}}
+      - default
     restart: unless-stopped
     expose:
       - 80
+    image: {{PROJECT_SLUG}}_frontend:production
+    container_name: {{PROJECT_SLUG}}_frontend
     env_file:
       - ./.env
+    environment:
+      - TIMEZONE=America/New_York
+      - TZ=${TIMEZONE}
   backend:
-    image: novanglus96/{{PROJECT_SLUG}}_backend:latest
-    container_name: {{PROJECT_SLUG}}_backend
+    build:
+      context: ./backend
     command: /home/app/web/start.sh
     volumes:
-      - {{PROJECT_SLUG}}_static_volume:/home/app/web/staticfiles
-      - {{PROJECT_SLUG}}_media_volume:/home/app/web/mediafiles
+      - static_volume:/home/app/web/staticfiles
+      - media_volume:/home/app/web/mediafiles
+      - postgres_bkp:/backups/
     expose:
       - 8000
     depends_on:
       - db
     networks:
-      - {{PROJECT_NAME}}
+      - default
+      - backend
     env_file:
       - ./.env
-  db:
-    image: postgres:15
-    container_name: {{PROJECT_SLUG}}_db
+    image: {{PROJECT_SLUG}}_backend:production
+    container_name: {{PROJECT_SLUG}}_backend
+  worker:
+    build:
+      context: ./backend
+    command: /home/app/web/start_worker.sh
     volumes:
-      - {{PROJECT_SLUG}}_postgres_data:/var/lib/postgresql/data/
-    env_file:
-      - ./.env.db
+      - static_volume:/home/app/web/staticfiles
+      - media_volume:/home/app/web/mediafiles
+      - postgres_bkp:/backups/
+    depends_on:
+      - db
+      - backend
     networks:
-      - {{PROJECT_NAME}}
+      - default
+      - backend
+    env_file:
+      - ./.env
+    image: {{PROJECT_SLUG}}_worker:production
+    container_name: {{PROJECT_SLUG}}_worker
+  db:
+    image: postgres:18-trixie
+    volumes:
+      - postgres_data:/var/lib/postgresql/data/
+    env_file:
+      - ./.env
+    networks:
+      - default
+      - backend
+    container_name: {{PROJECT_SLUG}}_db
+    environment:
+      - TZ=UTC
+      - POSTGRES_USER=${SQL_USER}
+      - POSTGRES_PASSWORD=${SQL_PASSWORD}
+      - POSTGRES_DB=${SQL_DATABASE}
   nginx:
     image: novanglus96/lenoreapps_proxy:latest
-    container_name: {{PROJECT_SLUG}}_nginx
-    ports:
-      - "8080:80"
     volumes:
-      - {{PROJECT_SLUG}}_static_volume:/home/app/web/staticfiles
-      - {{PROJECT_SLUG}}_media_volume:/home/app/web/mediafiles
+      - static_volume:/home/app/web/staticfiles
+      - media_volume:/home/app/web/mediafiles
     depends_on:
       - backend
       - frontend
     networks:
-      - {{PROJECT_NAME}}
-
-networks:
-  {{PROJECT_NAME}}:
+      - default
+    ports:
+      - 7000:80
+    container_name: {{PROJECT_SLUG}}_proxy
+    environment:
+      - TZ=${TIMEZONE}
 
 volumes:
-  {{PROJECT_SLUG}}_postgres_data:
-    external: true
-  {{PROJECT_SLUG}}_static_volume:
-    external: true
-  {{PROJECT_SLUG}}_media_volume:
-    external: true
+  postgres_data:
+  static_volume:
+  media_volume:
+  postgres_bkp:
+   
+networks:
+  backend:
+    internal: true
 ```
 
 ### Step 3: Run the Application
