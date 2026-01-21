@@ -1,8 +1,7 @@
 After creating project from template:
 
-    * Import branch rulesets
-    * Under Actions/General check Allow GitHub Actions to create and approve pull requests
-    * Create Repo Secrets
+    * jq and gh cli must be installed
+    * gh must be authorized
     * run ./scripts/init.sh to initialize new project
 
 You can delete this file once completed.
