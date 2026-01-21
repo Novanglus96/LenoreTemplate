@@ -47,9 +47,6 @@ INSTALLED_APPS = [
     "allauth",
     "allauth.account",
     "allauth.socialaccount",
-    "ad_computers",
-    "ad_groups",
-    "ad_users",
     "options",
     "core.apps.CoreConfig",
     "corsheaders",
@@ -360,12 +357,6 @@ JAZZMIN_UI_TWEAKS = {
     },
     "actions_sticky_top": False,
 }
-
-# AD Information
-AD_DOMAIN = os.environ.get("AD_DOMAIN")
-AD_USERNAME = os.environ.get("AD_USERNAME")
-AD_PASSWORD = os.environ.get("AD_PASSWORD")
-AD_DC = os.environ.get("AD_DC")
 
 SECURE_CROSS_ORIGIN_OPENER_POLICY = None
 
