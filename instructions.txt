@@ -1,7 +1,9 @@
 After creating project from template:
 
-    * jq and gh cli must be installed
-    * gh must be authorized
+    * jq and gh cli must be installed (sudo apt install jq gh)
+    * gh must be authorized (gh auth login)
+    * rename example_env_secrets to env.secrets and enter information
+    * setup gh_runners (as needed)
     * run ./scripts/init.sh to initialize new project
 
 You can delete this file once completed.
