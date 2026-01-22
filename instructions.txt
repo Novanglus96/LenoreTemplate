@@ -6,5 +6,6 @@ After creating project from template:
     * setup gh_runners (as needed)
     * run ./scripts/init.sh to initialize new project
     * change allowed hosts in .env files
+    * create rc/alpha/beta/rc-fixes branches
 
 You can delete this file once completed.
