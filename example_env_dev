@@ -1,7 +1,7 @@
 DEBUG=1
 SECRET_KEY=somekey
-DJANGO_ALLOWED_HOSTS=localhost
-CSRF_TRUSTED_ORIGINS=http://localhost
+DJANGO_ALLOWED_HOSTS=localhost backend
+CSRF_TRUSTED_ORIGINS=http://localhost http://backend
 SQL_ENGINE=django.db.backends.postgresql
 SQL_DATABASE={{PROJECT_SLUG}}
 SQL_USER={{PROJECT_SLUG}}user
