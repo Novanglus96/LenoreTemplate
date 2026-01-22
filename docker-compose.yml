@@ -70,9 +70,6 @@ services:
     container_name: {{PROJECT_SLUG}}_db_dev
     environment:
       - TZ=UTC
-      - POSTGRES_USER=${SQL_USER}
-      - POSTGRES_PASSWORD=${SQL_PASSWORD}
-      - POSTGRES_DB=${SQL_DATABASE}
 
 volumes:
   postgres_data:
