@@ -22,10 +22,20 @@ export default defineConfig({
   server: {
     proxy: {
       "/api": {
-        target: "https://back-dev.middletownnj.local/api", // Backend API server
+        target: "http://backend:8001/api", // Backend API server
         changeOrigin: true,
         rewrite: path => path.replace(/^\/api/, ""),
       },
+    },
+    watch: {
+      usePolling: true,
+      interval: 300,
+      ignored: [
+        "**/node_modules/**",
+        "**/.git/**",
+        "**/dist/**",
+        "**/__pycache__/**",
+      ],
     },
   },
   define: {
