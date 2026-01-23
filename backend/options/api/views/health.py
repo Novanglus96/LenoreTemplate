@@ -3,7 +3,7 @@ from ninja import Router
 health_router = Router(tags=["Health"])
 
 
-@health_router.get("/")
+@health_router.get("/", auth=None)
 def health_check(request):
     """
     The function `health_check` returns ok if backend is ready.

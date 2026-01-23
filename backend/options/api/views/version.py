@@ -4,6 +4,7 @@ from options.models import Version
 from options.api.schemas.version import VersionOut
 from django.shortcuts import get_object_or_404
 import logging
+from django.http import Http404
 
 api_logger = logging.getLogger("api")
 db_logger = logging.getLogger("db")
@@ -30,6 +31,8 @@ def list_version(request):
         qs = get_object_or_404(Version, id=1)
         api_logger.debug("Version retrieved")
         return qs
+    except Http404:
+        raise
     except Exception as e:
         # Log other types of exceptions
         api_logger.error("Version not retrieved")
