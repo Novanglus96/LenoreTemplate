@@ -5,15 +5,7 @@
     :duration="5"
     :opacity="0.8"
     direction="alternate"
-    :messages="[
-      'Balancing the budget... with duct tape...',
-      'Cooking the books (legally, we promise)...',
-      'Checking under the mattress for loose change...',
-      'Calculating compound interest... and snacks...',
-      'Auditing your vibes...',
-      'Putting cash in envelopes...',
-      'Aligning the stars...',
-    ]"
+    :messages="['Funny loading message...']"
     v-if="!backendReady"
   />
 
