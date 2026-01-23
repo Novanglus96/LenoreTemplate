@@ -1,5 +1,6 @@
 After creating project from template:
 
+    * git tag v0.0.0 && git push origin v0.0.0
     * jq and gh cli must be installed (sudo apt install jq gh)
     * gh must be authorized (gh auth login)
     * rename example_env_secrets to env.secrets and enter information
