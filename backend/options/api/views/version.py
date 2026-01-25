@@ -16,14 +16,17 @@ version_router = Router(tags=["Version"])
 @version_router.get("/list", response=VersionOut)
 def list_version(request):
     """
-    The function `list_version` retrieves the app version number
-    from the backend.
+    The function `list_version` retrieves the version.
+
+    Endpoint:
+        - **Path**: `/api/v1/options/version/list`
+        - **Method**: `GET`
 
     Args:
         request (HttpRequest): The HTTP request object.
 
     Returns:
-        VersionOut: a version object
+        (VersionOut): A version object.
     """
 
     try:

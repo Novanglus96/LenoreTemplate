@@ -8,6 +8,10 @@ def health_check(request):
     """
     The function `health_check` returns ok if backend is ready.
 
+    Endpoint:
+        - **Path**: `/api/v1/options/health`
+        - **Method**: `GET`
+
     Args:
         request (HttpRequest): The HTTP request object.
 

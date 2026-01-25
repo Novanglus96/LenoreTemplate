@@ -9,6 +9,8 @@ nav:
   - Reference:
       - Models: models.md
       - API: api.md
+      - Services: services.md
+      - Utilities: utils.md
 theme:
   name: material
   palette:
