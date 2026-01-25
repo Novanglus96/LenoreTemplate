@@ -71,6 +71,9 @@ source .venv/bin/activate
 cd backend
 pip install --no-cache-dir -r requirements.txt
 
+# Install pip dev requirements
+pip install --no-cache-dir -r requirements-dev.txt
+
 # install npm packages
 cd ../frontend
 npm install
