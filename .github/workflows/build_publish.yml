@@ -57,9 +57,9 @@ jobs:
           SLUG="$(echo "${{ github.event.repository.name }}" \
             | tr '[:upper:]' '[:lower:]')"
           
-          echo "FRONTEND_NAME=${SLUG}_frontend" >> "GITHUB_ENV"
-          echo "BACKEND_NAME=${SLUG}_backend" >> "GITHUB_ENV"
-          echo "WORKER_NAME=${SLUG}_worker" >> "GITHUB_ENV"
+          echo "FRONTEND_NAME=${SLUG}_frontend" >> "$GITHUB_ENV"
+          echo "BACKEND_NAME=${SLUG}_backend" >> "$GITHUB_ENV"
+          echo "WORKER_NAME=${SLUG}_worker" >> "$GITHUB_ENV"
 
       - name: Check if Docker tag exists
         env:
