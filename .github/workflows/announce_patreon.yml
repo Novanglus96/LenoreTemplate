@@ -1,0 +1,61 @@
+name: Announce on Patreon
+
+on:
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: "Release tag to announce (e.g. v1.3.0)"
+        required: true
+  release:
+    types: [published]
+
+permissions:
+  contents: read
+
+env:
+  VERSION: ${{ github.event.release.tag_name || inputs.tag }}
+  IS_PRERELEASE: ${{ github.event.release.prerelease || 'false' }}
+
+jobs:
+  patreon:
+    if: github.repository != 'Novanglus96/LenoreTemplate'
+    runs-on: self-hosted
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Skip pre-releases
+        id: check_prerelease
+        run: |
+          if [ "$IS_PRERELEASE" = "true" ]; then
+            echo "skip=true" >> "$GITHUB_OUTPUT"
+            echo "Pre-release detected, skipping Patreon post."
+          elif echo "$VERSION" | grep -qE "(alpha|beta|rc)"; then
+            echo "skip=true" >> "$GITHUB_OUTPUT"
+            echo "Pre-release tag detected, skipping Patreon post."
+          else
+            echo "skip=false" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Get release notes
+        if: steps.check_prerelease.outputs.skip == 'false'
+        id: release_notes
+        uses: actions/github-script@v7
+        with:
+          result-encoding: string
+          script: |
+            const release = await github.rest.repos.getLatestRelease({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+            });
+            return release.data.body || "No changelog found.";
+
+      - name: Post to Patreon
+        if: steps.check_prerelease.outputs.skip == 'false'
+        env:
+          COMMIT_TAG: ${{ github.event.release.tag_name || inputs.tag }}
+          RELEASE_NOTES: ${{ steps.release_notes.outputs.result }}
+          PATREON_ACCESS_TOKEN: ${{ secrets.PATREON_ACCESS_TOKEN }}
+          PATREON_CAMPAIGN_ID: ${{ secrets.PATREON_CAMPAIGN_ID }}
+        run: python scripts/post_to_patreon.py
