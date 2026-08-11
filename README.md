@@ -143,52 +143,37 @@ Create a `docker-compose.yml` file in the root directory of the project. Below i
 
 ```yaml
 services:
-  frontend:
-    image: {{PROJECT_SLUG}}_frontend:production
-    container_name: {{PROJECT_SLUG}}_frontend
+  # One published image contains the Vue bundle, Django under gunicorn, the
+  # django-q worker and the nginx that fronts them. Earlier releases shipped
+  # four containers (frontend, backend, worker, nginx) — if you are upgrading
+  # from one of those, keep your `db` service and its volume and replace the
+  # other four with this single service.
+  app:
+    image: novanglus96/{{PROJECT_SLUG}}:latest
+    container_name: {{PROJECT_SLUG}}
+    volumes:
+      - static_volume:/home/app/web/staticfiles
+      - media_volume:/home/app/web/mediafiles
+      - postgres_bkp:/backups/
+    ports:
+      - 7000:80
+    depends_on:
+      db:
+        condition: service_healthy
     networks:
       - default
+    env_file:
+      - ./.env
     restart: unless-stopped
-    expose:
-      - 80
-    env_file:
-      - ./.env
     environment:
-      - TIMEZONE=America/New_York
+      - DEBUG=0
       - TZ=${TIMEZONE}
-  backend:
-    image: {{PROJECT_SLUG}}_backend:production
-    container_name: {{PROJECT_SLUG}}_backend
-    command: /home/app/web/start.sh
-    volumes:
-      - static_volume:/home/app/web/staticfiles
-      - media_volume:/home/app/web/mediafiles
-      - postgres_bkp:/backups/
-    expose:
-      - 8000
-    depends_on:
-      - db
-    networks:
-      - default
-      - backend
-    env_file:
-      - ./.env
-  worker:
-    image: {{PROJECT_SLUG}}_worker:production
-    container_name: {{PROJECT_SLUG}}_worker
-    command: /home/app/web/start_worker.sh
-    volumes:
-      - static_volume:/home/app/web/staticfiles
-      - media_volume:/home/app/web/mediafiles
-      - postgres_bkp:/backups/
-    depends_on:
-      - db
-      - backend
-    networks:
-      - default
-      - backend
-    env_file:
-      - ./.env
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost/api/v1/options/health/"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 60s
   db:
     image: postgres:18-trixie
     container_name: {{PROJECT_SLUG}}_db
@@ -198,37 +183,24 @@ services:
       - ./.env
     networks:
       - default
-      - backend
+    restart: unless-stopped
     environment:
       - TZ=UTC
       - POSTGRES_USER=${SQL_USER}
       - POSTGRES_PASSWORD=${SQL_PASSWORD}
       - POSTGRES_DB=${SQL_DATABASE}
-  nginx:
-    image: novanglus96/lenoreapps_proxy:latest
-    container_name: {{PROJECT_SLUG}}_proxy
-    volumes:
-      - static_volume:/home/app/web/staticfiles
-      - media_volume:/home/app/web/mediafiles
-    depends_on:
-      - backend
-      - frontend
-    networks:
-      - default
-    ports:
-      - 7000:80
-    environment:
-      - TZ=${TIMEZONE}
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $$POSTGRES_USER -d $$POSTGRES_DB"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 15s
 
 volumes:
   postgres_data:
   static_volume:
   media_volume:
   postgres_bkp:
-   
-networks:
-  backend:
-    internal: true
 ```
 
 ### Step 3: Run the Application
@@ -239,7 +211,7 @@ networks:
    docker compose up -d
    ```
 
-2. Access the application in your browser at `http://localhost:8080`.
+2. Access the application in your browser at `http://localhost:7000`.
 
 ### Notes
 

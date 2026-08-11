@@ -8,8 +8,8 @@ services:
     restart: unless-stopped
     ports:
       - 8081:5173
-    image: {{PROJECT_SLUG}}_frontend:development
-    container_name: {{PROJECT_SLUG}}_frontend_dev
+    image: "{{PROJECT_SLUG}}_frontend:development"
+    container_name: "{{PROJECT_SLUG}}_frontend_dev"
     volumes:
       - ./frontend:/app
     environment:
@@ -38,8 +38,8 @@ services:
     networks:
       - default
       - backend
-    image: {{PROJECT_SLUG}}_backend:development
-    container_name: {{PROJECT_SLUG}}_backend_dev
+    image: "{{PROJECT_SLUG}}_backend:development"
+    container_name: "{{PROJECT_SLUG}}_backend_dev"
   worker:
     build:
       context: ./backend
@@ -57,8 +57,8 @@ services:
       - backend
     networks:
       - backend
-    image: {{PROJECT_SLUG}}_worker:development
-    container_name: {{PROJECT_SLUG}}_worker_dev
+    image: "{{PROJECT_SLUG}}_worker:development"
+    container_name: "{{PROJECT_SLUG}}_worker_dev"
   db:
     image: postgres:18-trixie
     volumes:
@@ -67,7 +67,7 @@ services:
       - ./.env.dev
     networks:
       - backend
-    container_name: {{PROJECT_SLUG}}_db_dev
+    container_name: "{{PROJECT_SLUG}}_db_dev"
     environment:
       - TZ=UTC
 

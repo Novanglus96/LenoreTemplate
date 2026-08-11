@@ -1,57 +1,39 @@
-version: "3.8"
-
 services:
-  frontend:
-    build: ./frontend
+  # One image, built from the repo root: the Vue bundle, Django under gunicorn,
+  # the django-q worker and the nginx that fronts them. It replaces the old
+  # frontend + backend + worker + nginx quartet. CI resolves what to publish
+  # from this file — the `build-publish` stub passes `image_list: app`, so the
+  # service name here and the name there must agree.
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    command: /home/app/web/start.app.sh
+    volumes:
+      - static_volume:/home/app/web/staticfiles
+      - media_volume:/home/app/web/mediafiles
+      - postgres_bkp:/backups/
+    ports:
+      - 7000:80
+    depends_on:
+      db:
+        condition: service_healthy
     networks:
       - default
-    restart: unless-stopped
-    expose:
-      - 80
-    image: {{PROJECT_SLUG}}_frontend:production
-    container_name: {{PROJECT_SLUG}}_frontend
     env_file:
       - ./.env
+    image: "{{PROJECT_SLUG}}:production"
+    container_name: "{{PROJECT_SLUG}}"
     environment:
-      - TIMEZONE=America/New_York
+      - DEBUG=0
       - TZ=${TIMEZONE}
-  backend:
-    build:
-      context: ./backend
-    command: /home/app/web/start.sh
-    volumes:
-      - static_volume:/home/app/web/staticfiles
-      - media_volume:/home/app/web/mediafiles
-      - postgres_bkp:/backups/
-    expose:
-      - 8000
-    depends_on:
-      - db
-    networks:
-      - default
-      - backend
-    env_file:
-      - ./.env
-    image: {{PROJECT_SLUG}}_backend:production
-    container_name: {{PROJECT_SLUG}}_backend
-  worker:
-    build:
-      context: ./backend
-    command: /home/app/web/start_worker.sh
-    volumes:
-      - static_volume:/home/app/web/staticfiles
-      - media_volume:/home/app/web/mediafiles
-      - postgres_bkp:/backups/
-    depends_on:
-      - db
-      - backend
-    networks:
-      - default
-      - backend
-    env_file:
-      - ./.env
-    image: {{PROJECT_SLUG}}_worker:production
-    container_name: {{PROJECT_SLUG}}_worker
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost/api/v1/options/health/"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 60s
+
   db:
     image: postgres:18-trixie
     volumes:
@@ -60,35 +42,21 @@ services:
       - ./.env
     networks:
       - default
-      - backend
-    container_name: {{PROJECT_SLUG}}_db
+    container_name: "{{PROJECT_SLUG}}_db"
     environment:
       - TZ=UTC
       - POSTGRES_USER=${SQL_USER}
       - POSTGRES_PASSWORD=${SQL_PASSWORD}
       - POSTGRES_DB=${SQL_DATABASE}
-  nginx:
-    image: novanglus96/lenoreapps_proxy:latest
-    volumes:
-      - static_volume:/home/app/web/staticfiles
-      - media_volume:/home/app/web/mediafiles
-    depends_on:
-      - backend
-      - frontend
-    networks:
-      - default
-    ports:
-      - 7000:80
-    container_name: {{PROJECT_SLUG}}_proxy
-    environment:
-      - TZ=${TIMEZONE}
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $$POSTGRES_USER -d $$POSTGRES_DB"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 15s
 
 volumes:
   postgres_data:
   static_volume:
   media_volume:
   postgres_bkp:
-   
-networks:
-  backend:
-    internal: true
