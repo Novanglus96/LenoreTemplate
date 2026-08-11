@@ -19,8 +19,8 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
         """
-        The function `handle` adds a scheduled task to Django Q atams96@gmail.com>
-        build.  If a task schedule exists, it modifies the existing.
+        The function `handle` adds a scheduled task to Django Q on build.
+        If a task schedule already exists, it modifies the existing one.
 
         Args:
             self: The class instance.
