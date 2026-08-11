@@ -1,0 +1,23 @@
+name: Announce
+on:
+  release:
+    types: [published]
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: "Release tag to announce (e.g. v1.0.0)"
+        required: true
+jobs:
+  # Reddit only. The old announce_patreon.yml and scripts/post_to_patreon.py
+  # were DELETED rather than ported: they POST to /api/oauth2/v2/posts, and
+  # Patreon's public API v2 is read-only for posts, so that job had been 404ing
+  # since 2026-05-28 while reporting green (continue-on-error made the step, the
+  # job and the run all report success). Shipping it in a template would hand
+  # every new project a check that cannot pass.
+  reddit:
+    uses: lenore/lenore-ci/.forgejo/workflows/announce.yml@v1
+    with:
+      tag: ${{ github.event.release.tag_name || inputs.tag }}
+      target: reddit
+      dry_run: false
+    secrets: inherit

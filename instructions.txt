@@ -1,12 +1,23 @@
-After creating project from template:
+After creating a project from this template:
 
+    * run ./scripts/init.sh to initialize the new project
+        - substitutes {{PROJECT_NAME}} / {{PROJECT_SLUG}}
+        - moves example_env / example_env_dev into place
+        - creates the rc, beta and alpha branches
+        - sets up .venv and installs backend + frontend deps
+    * change DJANGO_ALLOWED_HOSTS / CSRF_TRUSTED_ORIGINS in .env and .env.dev
     * git tag v0.0.0 && git push origin v0.0.0
-    * jq and gh cli must be installed (sudo apt install jq gh)
-    * gh must be authorized (gh auth login)
-    * rename example_env_secrets to env.secrets and enter information
-    * setup gh_runners (as needed)
-    * run ./scripts/init.sh to initialize new project
-    * change allowed hosts in .env files
-    * create rc/alpha/beta/rc-fixes/alpha-fixes/beta-fixes branches
+    * follow the checklist init.sh prints at the end (GitHub mirror repo,
+      forgejo_push_mirrors.yml, the GitHub ruleset, the release-audit entry)
+
+No longer needed, and deliberately so:
+
+    * jq / gh are not required by init.sh any more.
+    * There is no .env.secrets. CI secrets are ORGANISATION secrets on the
+      `lenore` org and are inherited by every repo via `secrets: inherit`.
+    * There are no GitHub Actions runners to set up — that fleet was retired on
+      2026-08-10. CI runs on the forge's own runner pool.
+    * The *-fixes branches were never used by .releaserc.json, which declares
+      exactly four channels: main, rc, beta, alpha.
 
 You can delete this file once completed.

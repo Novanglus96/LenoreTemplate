@@ -1,0 +1,22 @@
+name: Tests
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+jobs:
+  # New in the Phase 6 rework — the template had no test workflow at all despite
+  # shipping pytest.ini, conftest.py, settings_test.py and a real suite under
+  # backend/options/tests/. A scaffolded project now gets test CI on day one.
+  #
+  # Two inputs override lenore-ci's defaults because this repo differs from
+  # LenoreChore, which the defaults were written for:
+  #   * backend_requirements — there is no requirements-test.txt here; pytest,
+  #     pytest-django, pytest-mock and factory-boy are all in requirements.txt.
+  #   * frontend — package.json defines no `test` script, so the frontend job
+  #     would fail on a missing script rather than on a failing test. Flip this
+  #     to true (and add the script) when a project grows frontend tests.
+  tests:
+    uses: lenore/lenore-ci/.forgejo/workflows/tests.yml@v1
+    with:
+      backend_requirements: requirements.txt
+      frontend: false
+    secrets: inherit

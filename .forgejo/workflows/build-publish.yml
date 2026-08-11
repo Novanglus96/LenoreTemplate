@@ -1,0 +1,27 @@
+name: Build & Publish
+on:
+  release:
+    types: [published]
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: "Release tag to build and publish (e.g. v1.0.0)"
+        required: true
+jobs:
+  build-publish:
+    uses: lenore/lenore-ci/.forgejo/workflows/build-publish.yml@v1
+    with:
+      # The tag is the only source of truth. workflow_dispatch is what the old
+      # build_publish.yml lacked entirely — its sole trigger was
+      # release:[published], so re-running a failed build meant deleting and
+      # re-publishing the release.
+      tag: ${{ github.event.release.tag_name || inputs.tag }}
+      # One service since the single-container consolidation. The name must
+      # match the service in docker-compose-prod.yml — build-publish resolves
+      # image names from `docker compose config` rather than assuming, so a
+      # mismatch fails loudly with KeyError rather than publishing nothing.
+      image_list: app
+      push_dockerhub: true
+      push_forge: true
+      dry_run: false
+    secrets: inherit

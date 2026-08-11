@@ -1,0 +1,16 @@
+name: Semantic Release
+on:
+  workflow_dispatch:
+  push:
+    branches: [main, alpha, beta, rc]
+jobs:
+  release:
+    uses: lenore/lenore-ci/.forgejo/workflows/release.yml@v1
+    with:
+      # Shipped live (dry_run: false) so a project scaffolded from this template
+      # releases without anyone editing a workflow file. The template repo
+      # itself does not run these — Actions is disabled on lenore/LenoreTemplate
+      # and that is enforced by Ansible, not by a UI setting. See the README in
+      # this directory.
+      dry_run: false
+    secrets: inherit
